@@ -22,7 +22,15 @@ while true; do
     output=$($COMMAND 2>&1)
 
     # ライブラリ名取得
-    lib=$(echo $output | sed -E "s/^(.*?[$s])?([^$s:]+\.so[^$s:]+)?.*$/\2/")
+    lib=
+    for word in $output; do
+        if [[ $word == *".so"* ]]; then
+            # ファイル名に使えない文字を除去
+            lib=$(echo "$word" | sed 's/[^a-zA-Z0-9._-]//g')
+            break
+        fi
+    done
+    
     if [ "$lib" != "" ]; then
         echo "Missing library: $lib"
 
